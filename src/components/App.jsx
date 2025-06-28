@@ -30,7 +30,7 @@ function App() {
 
     return (
         <>
-            <h1>Memory Card Game</h1>
+            <h1 className="gameHeading">Memory Card Game</h1>
             <button
                 onClick={() => {
                     setPokemons(shuffle(pokemons));
@@ -38,11 +38,17 @@ function App() {
             >
                 Shuffle
             </button>
-            <ul>
+            <ul className="gameContainer">
                 {pokemons.map((pokemonData) => (
-                    <li>
-                        <p>Name: {pokemonData.name}</p>
-                        <img src={pokemonData.imgUrl} alt={pokemonData.name} />
+                    <li key={pokemonData.name} className="pokeCard">
+                        <img
+                            src={pokemonData.imgUrl}
+                            className="pokeImg"
+                            alt={pokemonData.name}
+                        />
+                        <p>
+                            <b>{capitalizeWord(pokemonData.name)}</b>
+                        </p>
                     </li>
                 ))}
             </ul>
@@ -94,6 +100,11 @@ function getPokemonsData(pokeArray) {
     const arrayOfPokemonObjects = Promise.all(promises);
 
     return arrayOfPokemonObjects;
+}
+
+function capitalizeWord(word) {
+    const firstLetter = word.charAt(0).toUpperCase();
+    return firstLetter + word.slice(1);
 }
 
 export default App;
