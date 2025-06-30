@@ -103,3 +103,7 @@ ul {
     justify-content: center;
     gap: 50px;
 }
+
+.info {
+    text-align: center;
+}

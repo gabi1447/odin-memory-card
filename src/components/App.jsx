@@ -74,6 +74,11 @@ function App() {
     return (
         <>
             <h1 className="gameHeading">Memory Card Game</h1>
+            <h2 className="info">Try clicking all pokemons just once.</h2>{" "}
+            <p className="info">
+                If you click a pokemon that has already been clicked, the
+                counter resets.
+            </p>
             <div className="score">
                 <h2>Current Score: {currentScore}</h2>
                 <h2>Best Score: {bestScore}</h2>
