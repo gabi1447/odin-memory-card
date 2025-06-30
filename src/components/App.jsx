@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
+import PokeCard from "./PokeCard";
 
 function App() {
     const [pokemons, setPokemons] = useState([]);
+    const [gameState, setGameState] = useState({});
+    const [currentScore, setCurrentScore] = useState(0);
+    const [bestScore, setBestScore] = useState(0);
+
+    /* const currentScoreRef = useRef(currentScore); */
 
     // prettier-ignore
     const pokeArray = [
@@ -19,37 +25,67 @@ function App() {
         "hawlucha"
     ]
 
+    // Populate pokemon data state
     useEffect(() => {
         getPokemonsData(pokeArray).then((pokemonsData) => {
-            setPokemons(pokemonsData);
+            setPokemons(shuffle(pokemonsData));
         });
         // eslint-disable-next-line
     }, []);
 
-    console.log(pokemons);
+    // Create initial game state
+    useEffect(() => {
+        resetGameState();
+        // eslint-disable-next-line
+    }, []);
+
+    /* useEffect(() => {
+        currentScoreRef.current = currentScore;
+    }, [currentScore]); */
+
+    function handleClick(pokemonId) {
+        // Shuffle poke cards
+        setPokemons(shuffle([...pokemons]));
+
+        if (!gameState[pokemonId]) {
+            const nextGameState = { ...gameState };
+            nextGameState[pokemonId] = true;
+            setGameState(nextGameState);
+            setCurrentScore((prevCurrentScore) => {
+                return prevCurrentScore + 1;
+            });
+        } else {
+            if (currentScore > bestScore) {
+                setBestScore(currentScore);
+            }
+            setCurrentScore(0);
+            resetGameState();
+        }
+    }
+
+    function resetGameState() {
+        const initialGameState = {};
+        pokeArray.forEach((pokemon) => {
+            initialGameState[pokemon] = false;
+        });
+        setGameState(initialGameState);
+    }
 
     return (
         <>
             <h1 className="gameHeading">Memory Card Game</h1>
-            <button
-                onClick={() => {
-                    setPokemons(shuffle(pokemons));
-                }}
-            >
-                Shuffle
-            </button>
+            <div className="score">
+                <h2>Current Score: {currentScore}</h2>
+                <h2>Best Score: {bestScore}</h2>
+            </div>
             <ul className="gameContainer">
                 {pokemons.map((pokemonData) => (
-                    <li key={pokemonData.name} className="pokeCard">
-                        <img
-                            src={pokemonData.imgUrl}
-                            className="pokeImg"
-                            alt={pokemonData.name}
-                        />
-                        <p>
-                            <b>{capitalizeWord(pokemonData.name)}</b>
-                        </p>
-                    </li>
+                    <PokeCard
+                        key={pokemonData.name}
+                        name={pokemonData.name}
+                        imgUrl={pokemonData.imgUrl}
+                        onClick={handleClick}
+                    />
                 ))}
             </ul>
         </>
@@ -100,11 +136,6 @@ function getPokemonsData(pokeArray) {
     const arrayOfPokemonObjects = Promise.all(promises);
 
     return arrayOfPokemonObjects;
-}
-
-function capitalizeWord(word) {
-    const firstLetter = word.charAt(0).toUpperCase();
-    return firstLetter + word.slice(1);
 }
 
 export default App;
